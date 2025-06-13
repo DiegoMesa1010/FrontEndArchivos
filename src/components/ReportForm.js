@@ -1,14 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Swal from 'sweetalert2'
 import "../styles.css"
 
 const ReportForm = () => {
-    // Estado para manejar el loading y los mensajes
+    // Estado para manejar el loading
     const [isLoading, setIsLoading] = useState(false)
-    const [showSuccess, setShowSuccess] = useState(false)
-    const [showError, setShowError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("")
 
     const convertirHora12 = (hora24) => {
         if (!hora24) return "";
@@ -115,22 +113,11 @@ const ReportForm = () => {
         }
     }, [formData.hr_inicio, formData.hr_final])
 
-    // Función para ocultar mensajes después de un tiempo
-    const hideMessages = () => {
-        setTimeout(() => {
-            setShowSuccess(false)
-            setShowError(false)
-            setErrorMessage("")
-        }, 4000)
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         
         // Activar loading
         setIsLoading(true);
-        setShowSuccess(false);
-        setShowError(false);
 
         // Convertimos las horas al formato 12 horas con AM/PM
         const hrReporte12 = convertirHora12(formData.hr_reporte);
@@ -166,18 +153,27 @@ const ReportForm = () => {
 
             if (!response.ok) throw new Error("Error al enviar los datos");
 
-            // Éxito
+            // Éxito - SweetAlert2
             setIsLoading(false);
-            setShowSuccess(true);
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Reporte enviado con éxito',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#28a745'
+            });
             handleReset(); // Limpia el formulario
-            hideMessages();
 
         } catch (err) {
             console.error(err);
             setIsLoading(false);
-            setShowError(true);
-            setErrorMessage("Error al enviar el reporte. Intenta nuevamente.");
-            hideMessages();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al enviar el reporte. Intenta nuevamente.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#dc3545'
+            });
         }
     };
 
@@ -203,28 +199,9 @@ const ReportForm = () => {
         <div className="report-form-container">
             <h2>Formulario de Reporte de Fallas - Maquinaria</h2>
             
-            {/* Alertas de estado */}
-            {showSuccess && (
-                <div className="alert alert-success">
-                    <div className="alert-content">
-                        <span className="success-icon">✅</span>
-                        <span>¡Reporte enviado con éxito!</span>
-                    </div>
-                </div>
-            )}
-
-            {showError && (
-                <div className="alert alert-error">
-                    <div className="alert-content">
-                        <span className="error-icon">❌</span>
-                        <span>{errorMessage}</span>
-                    </div>
-                </div>
-            )}
-
             <form className="report-form machinery-form" onSubmit={handleSubmit}>
 
-                {/* Fila 1: Máquina y Fecha */}
+                {/* Resto del formulario igual que antes */}
                 <div className="form-row">
                     <div className="form-group">
                         <label htmlFor="maquina">Máquina:</label>
