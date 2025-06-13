@@ -6,8 +6,8 @@ const Header = () => {
       <div className="container">
         <div className="header-content">
           <div className="logo">
-            <h1>MineralTech</h1>
-            <p>Extracción y Procesamiento de Minerales</p>
+            <h1>Registro de Fallas</h1>
+            <p>Registro por maquina de fallas y mantenimientos</p>
           </div>
           <nav className="main-nav">
             <ul>

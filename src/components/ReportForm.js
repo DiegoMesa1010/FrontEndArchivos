@@ -35,23 +35,35 @@ const ReportForm = () => {
 
     // Lista de máquinas para el selector
     const maquinas = [
-        "Excavadora CAT 320",
-        "Bulldozer D6T",
-        "Cargador 950M",
-        "Grúa Grove RT9130E",
-        "Motoniveladora 140M",
-        "Compactadora CS78B",
-        "Retroexcavadora 420F2",
-        "Volqueta Kenworth T800"
+        "JUMBO JM01",
+        "MT02",
+        "MT03",
+        "MT04",
+        "MT05",
+        "MT06",
+        "MT07",
+        "MT08",
+        "MT09",
+        "MT10",
+        "MT11",
+        "MT12(HX07)",
+        "MT13(HX07)",
+        "SD04",
+        "SD05",
+        "SD06",
+        "SD07",
+        "BOBCAT ML04"
     ]
 
     // Tipos de falla - 5 opciones
     const tiposFalla = [
-        "Mecánica",
-        "Eléctrica",
-        "Hidráulica",
-        "Neumática",
-        "Estructura"
+        "MP(mantenimiento preventivo)",
+        "FM(falla mecánica)",
+        "FE(falla eléctrica)",
+        "FH(falla hidráulica)",
+        "DE(daño equipo)",
+        "P(pinchada)",
+        "S( repuestos)"
     ]
 
     // Función para calcular tiempo de falla
