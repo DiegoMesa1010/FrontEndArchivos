@@ -4,6 +4,11 @@ import { useState, useEffect } from "react"
 import "../styles.css"
 
 const ReportForm = () => {
+    // Estado para manejar el loading y los mensajes
+    const [isLoading, setIsLoading] = useState(false)
+    const [showSuccess, setShowSuccess] = useState(false)
+    const [showError, setShowError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
 
     const convertirHora12 = (hora24) => {
         if (!hora24) return "";
@@ -13,6 +18,7 @@ const ReportForm = () => {
         const hora12 = horaNum % 12 || 12; // si es 0, muestra 12
         return `${String(hora12).padStart(2, '0')}:${minutos} ${periodo}`;
     };
+
     const [formData, setFormData] = useState({
         maquina: "",
         fecha: "",
@@ -109,8 +115,22 @@ const ReportForm = () => {
         }
     }, [formData.hr_inicio, formData.hr_final])
 
+    // Función para ocultar mensajes después de un tiempo
+    const hideMessages = () => {
+        setTimeout(() => {
+            setShowSuccess(false)
+            setShowError(false)
+            setErrorMessage("")
+        }, 4000)
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Activar loading
+        setIsLoading(true);
+        setShowSuccess(false);
+        setShowError(false);
 
         // Convertimos las horas al formato 12 horas con AM/PM
         const hrReporte12 = convertirHora12(formData.hr_reporte);
@@ -146,12 +166,18 @@ const ReportForm = () => {
 
             if (!response.ok) throw new Error("Error al enviar los datos");
 
-            alert("✅ Reporte enviado con éxito");
+            // Éxito
+            setIsLoading(false);
+            setShowSuccess(true);
             handleReset(); // Limpia el formulario
+            hideMessages();
 
         } catch (err) {
             console.error(err);
-            alert("❌ Error al enviar el reporte");
+            setIsLoading(false);
+            setShowError(true);
+            setErrorMessage("Error al enviar el reporte. Intenta nuevamente.");
+            hideMessages();
         }
     };
 
@@ -176,6 +202,26 @@ const ReportForm = () => {
     return (
         <div className="report-form-container">
             <h2>Formulario de Reporte de Fallas - Maquinaria</h2>
+            
+            {/* Alertas de estado */}
+            {showSuccess && (
+                <div className="alert alert-success">
+                    <div className="alert-content">
+                        <span className="success-icon">✅</span>
+                        <span>¡Reporte enviado con éxito!</span>
+                    </div>
+                </div>
+            )}
+
+            {showError && (
+                <div className="alert alert-error">
+                    <div className="alert-content">
+                        <span className="error-icon">❌</span>
+                        <span>{errorMessage}</span>
+                    </div>
+                </div>
+            )}
+
             <form className="report-form machinery-form" onSubmit={handleSubmit}>
 
                 {/* Fila 1: Máquina y Fecha */}
@@ -189,6 +235,7 @@ const ReportForm = () => {
                             onChange={handleChange}
                             required
                             className="machinery-select"
+                            disabled={isLoading}
                         >
                             <option value="">Seleccionar máquina...</option>
                             {maquinas.map((maquina, index) => (
@@ -207,6 +254,7 @@ const ReportForm = () => {
                             onChange={handleChange}
                             required
                             className="machinery-date"
+                            disabled={isLoading}
                         />
                         {formData.fecha && (
                             <small className="date-preview">Vista previa: {formatearFecha(formData.fecha)}</small>
@@ -225,6 +273,7 @@ const ReportForm = () => {
                             onChange={handleChange}
                             required
                             className="machinery-select"
+                            disabled={isLoading}
                         >
                             <option value="Dia">Día</option>
                             <option value="Noche">Noche</option>
@@ -241,6 +290,7 @@ const ReportForm = () => {
                             onChange={handleChange}
                             required
                             className="machinery-time"
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
@@ -257,6 +307,7 @@ const ReportForm = () => {
                             onChange={handleChange}
                             required
                             className="machinery-time"
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -270,6 +321,7 @@ const ReportForm = () => {
                             onChange={handleChange}
                             required
                             className="machinery-time"
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
@@ -300,11 +352,12 @@ const ReportForm = () => {
                             required
                             className="machinery-number"
                             placeholder="Ej: 1250.5"
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
 
-                {/* Fila 5: Tipo de Falla - ACTUALIZADO con 5 opciones */}
+                {/* Fila 5: Tipo de Falla */}
                 <div className="form-group">
                     <label htmlFor="tipo_falla">Tipo de Falla:</label>
                     <select
@@ -314,6 +367,7 @@ const ReportForm = () => {
                         onChange={handleChange}
                         required
                         className="machinery-select"
+                        disabled={isLoading}
                     >
                         <option value="">Seleccionar tipo de falla...</option>
                         {tiposFalla.map((tipo, index) => (
@@ -335,6 +389,7 @@ const ReportForm = () => {
                             required
                             className="machinery-text"
                             placeholder="Descripción de la falla"
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -349,6 +404,7 @@ const ReportForm = () => {
                             required
                             className="machinery-text"
                             placeholder="Nombre completo del mecánico"
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
@@ -365,6 +421,7 @@ const ReportForm = () => {
                         className="machinery-textarea"
                         rows="3"
                         placeholder="Diagnóstico detallado de la falla"
+                        disabled={isLoading}
                     />
                 </div>
 
@@ -380,14 +437,31 @@ const ReportForm = () => {
                         className="machinery-textarea"
                         rows="4"
                         placeholder="Descripción detallada del trabajo realizado"
+                        disabled={isLoading}
                     />
                 </div>
 
                 <div className="form-actions machinery-actions">
-                    <button type="submit" className="btn-submit machinery-submit">
-                        Enviar Reporte
+                    <button 
+                        type="submit" 
+                        className="btn-submit machinery-submit"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <div className="loading-content">
+                                <div className="spinner"></div>
+                                <span>Enviando...</span>
+                            </div>
+                        ) : (
+                            'Enviar Reporte'
+                        )}
                     </button>
-                    <button type="button" className="btn-reset machinery-reset" onClick={handleReset}>
+                    <button 
+                        type="button" 
+                        className="btn-reset machinery-reset" 
+                        onClick={handleReset}
+                        disabled={isLoading}
+                    >
                         Limpiar Formulario
                     </button>
                 </div>
