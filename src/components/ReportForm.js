@@ -57,13 +57,13 @@ const ReportForm = () => {
 
     // Tipos de falla - 5 opciones
     const tiposFalla = [
-        "MP(mantenimiento preventivo)",
-        "FM(falla mecánica)",
-        "FE(falla eléctrica)",
-        "FH(falla hidráulica)",
-        "DE(daño equipo)",
-        "P(pinchada)",
-        "S( repuestos)"
+        "MP",
+        "FM",
+        "FE",
+        "FH",
+        "DE",
+        "P",
+        "S"
     ]
 
     // Función para calcular tiempo de falla
