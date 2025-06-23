@@ -91,14 +91,15 @@ const ReportForm = () => {
     // Función para formatear fecha
     const formatearFecha = (fecha) => {
         if (!fecha) return ""
-        const date = new Date(fecha)
+
+        const [año, mes, dia] = fecha.split("-")
         const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun',
             'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
-        const dia = date.getDate().toString().padStart(2, '0')
-        const mes = meses[date.getMonth()]
-        const año = date.getFullYear().toString().slice(-2)
-        return `${dia}-${mes}-${año}`
+
+        const mesTexto = meses[parseInt(mes, 10) - 1]
+        return `${dia}-${mesTexto}-${año.slice(-2)}`
     }
+
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -127,7 +128,7 @@ const ReportForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Activar loading
         setIsLoading(true);
 
@@ -210,7 +211,7 @@ const ReportForm = () => {
     return (
         <div className="report-form-container">
             <h2>Formulario de Reporte de Fallas - Maquinaria</h2>
-            
+
             <form className="report-form machinery-form" onSubmit={handleSubmit}>
 
                 {/* Resto del formulario igual que antes */}
@@ -431,8 +432,8 @@ const ReportForm = () => {
                 </div>
 
                 <div className="form-actions machinery-actions">
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className="btn-submit machinery-submit"
                         disabled={isLoading}
                     >
@@ -445,9 +446,9 @@ const ReportForm = () => {
                             'Enviar Reporte'
                         )}
                     </button>
-                    <button 
-                        type="button" 
-                        className="btn-reset machinery-reset" 
+                    <button
+                        type="button"
+                        className="btn-reset machinery-reset"
                         onClick={handleReset}
                         disabled={isLoading}
                     >
